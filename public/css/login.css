@@ -1,0 +1,24 @@
+.form-row {
+    height: 300px;
+    width: 450px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 0 auto;
+    margin-top: 250px;
+}
+
+body {
+    background-image: url(/image/110.gif);
+}
+
+#longin_form {
+    margin-left: 150px;
+    margin-top: 30px;
+}
+
+.checkbox {
+    margin-left: 19px;
+}
+
+.col-md-12{
+    margin-left: -70px;
+}

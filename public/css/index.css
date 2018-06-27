@@ -1,0 +1,105 @@
+body {
+    background: url(/image/110.gif)
+}
+
+.activated {
+    background: #555555;
+}
+
+.row {
+    margin-top: 150px
+}
+
+.left {
+    background: white;
+    border-radius: 10px;
+    min-height: 350px;
+    /*自适应高度 */
+}
+
+.left-top {
+    height: 30px;
+    margin-top: 5px;
+}
+
+.right {
+    min-height: 607px;
+    background: white;
+    margin-left: 20px;
+    border-radius: 10px;
+}
+
+.top {
+    height: 80px;
+}
+
+.main {
+    min-height: 400px;
+    background: white;
+}
+
+hr {
+    height: 1px;
+    border: none;
+    border-top: 1px solid #555555;
+}
+
+ul,
+li {
+    margin: 0px;
+    padding: 0px;
+}
+
+li {
+    list-style: none
+}
+
+.glyphicon {
+    font-size: 25px;
+    color: tomato;
+    margin-left: 15px;
+}
+
+.text {
+    font-size: 25px;
+    margin-left: 5px;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+h3 {
+    font-size: 25px;
+    font-weight: normal;
+    color: dodgerblue;
+}
+
+.dropdown {
+    font-size: 30px;
+    width: 210px;
+    margin-top: 20px;
+}
+
+.top li {
+    display: inline;
+}
+
+/* .btn-group {
+    padding-top: 20px;
+    padding-left: 353px;
+} */
+
+.btn-group ul {
+    width: 220px;
+}
+
+.dropdown-menu {
+    width: 180px;
+    font-size: 30px;
+}
+
+input {
+    border: none;
+    outline: medium;
+}

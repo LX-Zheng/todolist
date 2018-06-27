@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Document</title>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <!-- <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css "> -->
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+    <div class="container">
+        <form action="/login_post" method="POST">
+            <div class="form-row">
+                <div class="form-horizontal col-md-offset-5" id="longin_form">
+                    <h3 class="form-title" style="margin-left: 30px">LOGIN</h3>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <i class="fa fa-user fa-lg"></i>
+                            <input class="form-control required" type="text" placeholder="Username" id="username" name="username" autofocus="autofocus" maxlength="20" />
+                        </div>
+                        <div class="form-group">
+                            <i class="fa fa-lock fa-lg"></i>
+                            <input class="form-control required" type="password" placeholder="Password" id="password" name="password" maxlength="8" />
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox">
+                            <input type="checkbox" id="remember" checked/>记住我
+                        </label>
+                        </div>
+                        <div class="form-group col-md-offset-9">
+                            <button type="submit" class="btn btn-success pull-right" name="submit" onclick="loginBtn_click()">登录</button>
+                            <!-- <button type="submit" class="btn btn-success pull-right" name="submit"><a href="/">登录</a></button> -->
+                        </div>
+                        <div class="form-group col-md-offset-9">
+                            <button type="submit" class="btn btn-success pull-right" name="submit"><a href="../views/register.html">注册</a></button>
+                            <!-- <button type="submit" class="btn btn-success pull-right" name="submit"><a href="/register">注册</a></button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var strName = localStorage.getItem('name');
+        var strPass = localStorage.getItem('passwd');
+        if (strName) {
+            $('#username').val(strName);
+        }
+        if (strPass) {
+            $('#password').val(strPass);
+        }
+    });
+
+    function loginBtn_click() {
+        var strName = $('#username').val();
+        var strPass = $('#password').val();
+        localStorage.setItem('name', strName);
+        if ($('#remember').is(':checked')) {
+            localStorage.setItem('passwd', strPass);
+        } else {
+            localStorage.removeItem('passwd');
+        }
+        window.location.reload();
+    }
+</script>
+
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Document</title>
+    <!-- <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css "> -->
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/index.css">
+    <script src="/dateformat.js"></script>
+</head>
+
+<body>
+    <div style="width: 100%;height: 100%;" :class="{activated:isActivated}" class="app">
+        <div class="container">
+            <div class="row">
+                <div>
+                    <button class="btn btn-lg" @click="changetheme() ">
+                        <span v-if="GetThemeId()===false ">夜间模式</span>
+                        <span v-else>日间模式</span>
+                    </button>
+                </div>
+                <div class="left col-md-3 ">
+                    <div class="left-top ">
+                        <div style="float: left;font-size: 30px ">
+                            {{ name }}
+                        </div>
+                    </div>
+                    <hr/>
+                    <div>
+                        <span class="glyphicon glyphicon-time " style="float: left; "></span>
+                        <ul class="text ">
+                            <li v-for="item,index in items " v-if="index===0 ">
+                                <a href="# " @click="setIndex(index) ">{{ item.message }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <span class="glyphicon glyphicon-home " style="float: left; "></span>
+                        <ul class="text ">
+                            <li v-for="item,index in items " v-if="index===1 ">
+                                <a href="# " @click="setIndex(index) ">{{ item.message }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <hr/>
+                    <h3>任务</h3>
+                    <div id="test ">
+                        <ul>
+                            <li>
+                                <a role="button " @click="addtest() ">
+                                    <span class="glyphicon glyphicon-file "></span>
+                                    <span class="text ">ADD TASK</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <input class="text" placeholder="添加" v-model="newItem.message" @keyup.enter="addtest">
+                        <ul class="text ">
+                            <li v-for="item,index in items " v-if="index!==0&index!==1 ">
+                                <a href="# " @click="setIndex(index) ">
+                                {{ item.message }}
+                            </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="right col-md-8 ">
+                    <div class="top ">
+                        <ul class="nav navbar-nav ">
+                            <li style="font-size: 30px;padding-top: 30px ">
+                                <input type="text" v-model="items[itemIndex].message">
+                            </li>
+                        </ul>
+                        <div style="float: right;padding-right: 20px;" v-if="itemIndex!==0&&itemIndex!==1">
+                            <span class="glyphicon glyphicon-trash" style="font-size: 25px;padding-top: 35px" @click="deletitem"></span>
+                        </div>
+                        <div class="btn-group" style="float: right;padding-top: 30px;">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">功能
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a @click="sort1()">日期排序降序</a>
+                                </li>
+                                <li>
+                                    <a @click="sort2()">日期排序升序</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a @click="hide()" v-if="isHide===false">隐藏完成</a>
+                                    <a @click="hide()" v-else>显示完成</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="main ">
+                        <div style="height: 35px ">
+                            <input type="text " style="font-size: 25px; " placeholder="搜索 " v-model="searchVal ">
+                            <img src="/image/search.jpg " width="30px " style="padding-top: 7px;float: right ">
+                        </div>
+                        <hr/>
+                        <ul class="text ">
+                            <p v-if="searchVal!==''">搜索结果</p>
+                            <ul>
+                                <li v-for="search in searchs" v-if="searchVal!==''">
+                                    {{ search.message }}
+                                    <div style="float: right;padding-right: 200px">位置:{{ gettitle(search.id) }}</div>
+                                </li>
+                            </ul>
+                            <p v-if="searchVal===''">未完成的</p>
+                            <!-- 我的一天：未完成的-->
+                            <li v-for="list,index in lists" v-if="itemIndex===0&&list.flag===false&&searchVal===''&&list.date===curDate">
+                                <label><input type="checkbox" @click="list.flag=!list.flag"/></label> {{ list.message }}
+                                <div style="float: right;padding-right: 20px;">
+                                    <span class="glyphicon glyphicon-th" style="font-size: 20px;" data-toggle="modal" data-target="#myModal" @click="change(index,list)"></span>
+                                </div>
+                                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                <h4 class="modal-title" id="myModalLabel">修改</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="text" placeholder="修改的名称" v-model="newList.message">
+                                                <div>
+                                                    <input type="date" class="addTask-input" name="plan_date_time" v-model="newList.date">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal" @click="init">关闭</button>
+                                                <button type="button" class="btn btn-primary" @click="changethislist(list)">提交更改</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="float: right;padding-right: 20px;">
+                                    <span class="glyphicon glyphicon-trash" style="font-size: 20px;" @click="lists.splice(index,1)"></span>
+                                </div>
+                                <div style="float: right;">{{ list.date }}</div>
+                            </li>
+                            <!-- 其他事件：未完成的 -->
+                            <li v-for="list,index in lists " v-if="list.id===itemIndex&&list.flag===false&&searchVal==='' ">
+                                <label><input type="checkbox" @click="list.flag=!list.flag"/></label> {{ list.message }}
+                                <div style="float: right;padding-right: 20px;">
+                                    <span class="glyphicon glyphicon-th" style="font-size: 20px;" data-toggle="modal" data-target="#myModal" @click="change(index,list)"></span>
+                                </div>
+                                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                <h4 class="modal-title" id="myModalLabel">修改</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="text" placeholder="修改的名称" v-model="newList.message">
+                                                <div>
+                                                    <input type="date" class="addTask-input" name="plan_date_time" v-model="newList.date ">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal" @click="init">关闭</button>
+                                                <button type="button" class="btn btn-primary" @click="changethislist(list) ">提交更改</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="float: right;padding-right: 20px;">
+                                    <span class="glyphicon glyphicon-trash" style="font-size: 20px;" @click="lists.splice(index,1)"></span>
+                                </div>
+                                <div style="float: right;">{{ list.date }}</div>
+                            </li>
+                            <p v-if="searchVal===''&&isHide===false">已完成的</p>
+                            <!-- 我的一天：已完成的 -->
+                            <li v-for="list,index in lists" v-if="itemIndex===0&&list.flag===true&&searchVal==='' &&list.date===curDate &&isHide===false">
+                                <label><input type="checkbox" @click="list.flag=!list.flag"/></label> {{ list.message }}
+                                <div style="float: right;padding-right: 20px; ">
+                                    <span class="glyphicon glyphicon-th" style="font-size: 20px;" data-toggle="modal" data-target="#myModal" @click="change(index,list) "></span>
+                                </div>
+                                <div class="modal fade " id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel " aria-hidden="true ">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                <h4 class="modal-title" id="myModalLabel ">修改</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="text" placeholder="修改的名称" v-model="newList.message">
+                                                <div>
+                                                    <input type="date" class="addTask-input" name="plan_date_time" v-model="newList.date">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal" @click="init">关闭</button>
+                                                <button type="button" class="btn btn-primary" @click="changethislist(list)">提交更改</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="float: right;padding-right: 20px; ">
+                                    <span class="glyphicon glyphicon-trash " style="font-size: 20px; " @click="lists.splice(index,1) "></span>
+                                </div>
+                                <div style="float: right; ">{{ list.date }}</div>
+                            </li>
+                            <!-- 其他事件：已完成的 -->
+                            <li v-for="list,index in lists" v-if="list.id===itemIndex&&list.flag===true&&searchVal===''&&isHide===false">
+                                <label><input type="checkbox" @click="list.flag=!list.flag"/></label> {{ list.message }}
+                                <div style="float: right;padding-right: 20px;">
+                                    <span class="glyphicon glyphicon-th" style="font-size: 20px;" data-toggle="modal" data-target="#myModal" @click="change(index,list)"></span>
+                                </div>
+                                <div class="modal fade" id="myModal" tabindex="-1 " role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                <h4 class="modal-title" id="myModalLabel">修改</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="text" placeholder="修改的名称" v-model="newList.message">
+                                                <div>
+                                                    <input type="date" class="addTask-input" name="plan_date_time" v-model="newList.date">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal" @click="init">关闭</button>
+                                                <button type="button" class="btn btn-primary" @click="changethislist(list)">提交更改</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="float: right;padding-right: 20px;">
+                                    <span class="glyphicon glyphicon-trash" style="font-size: 20px;" @click="lists.splice(index,1)"></span>
+                                </div>
+                                <div style="float: right;">{{ list.date }}</div>
+                            </li>
+                        </ul>
+                        <ul>
+                            <li>
+                                <span class="glyphicon glyphicon-plus "></span>
+                                <input class="text " placeholder="添加 " v-model="newList.message " @keyup.enter="addlist() ">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/vue.js "></script>
+<script>
+    // Vue.directive('focus', {
+    //     update: function(el, binding) {
+    //         if (binding.value) {
+    //             el.focus()
+    //         }
+    //     }
+    // })
+    if (!localStorage.hasOwnProperty('items')) {
+        localStorage.setItem('items', '[{"message":"我的一天"},{"message":"TO-DO"},{"message":"web"},{"message":"lol"}]')
+    }
+    if (!localStorage.hasOwnProperty('lists')) {
+        localStorage.setItem('lists', '[{"message":"web","id":2,"flag":false},{"message":"45","id":2,"flag":false},{"message":"lol","id":3,"flag":false}]')
+    }
+
+    var items = JSON.parse(localStorage.getItem('items')) 
+    var lists = JSON.parse(localStorage.getItem('lists'))
+    var curDate = DateFormat.format(new Date(), 'yyyy-MM-dd');
+    var name = JSON.parse(localStorage.getItem('name'))
+
+    var vm = new Vue({
+        el: '.app',
+        data: {
+            isActivated: false,
+            isHide:false,
+            itemIndex: 0,
+            newList: {
+                message: '',
+                id: this.itemIndex,
+                flag: false,
+                date: ''
+            },
+            newItem: {
+                message: ''
+            },
+            name:name,
+            items: items,
+            lists: lists,
+            curDate: curDate,
+            searchVal: '',
+            curindex: 0
+        },
+        methods: {
+            addtest: function() {
+                if (this.newItem) {
+                    this.items.push(this.newItem)
+                    this.newItem = {
+                        message: ''
+                    }
+                }
+            },
+            addlist: function() {
+                this.newList.id = this.itemIndex;
+                this.lists.push(this.newList)
+                this.newList = {
+                    message: '',
+                    id: this.itemIndex,
+                    flag: false
+                }
+            },
+            getname: function() {
+                return this.items[this.itemIndex].message
+            },
+            setIndex: function(index) {
+                this.itemIndex = index
+            },
+            getIndex: function() {
+                return this.itemIndex
+            },
+            changetheme: function() {
+                this.isActivated = !this.isActivated
+            },
+            GetThemeId: function() {
+                return this.isActivated
+            },
+            gettitle: function(id) {
+                return this.items[id].message
+            },
+            change: function(index, list) {
+                this.newList = {
+                    message: list.message,
+                    id: list.id,
+                    flag: list.flag,
+                    date: list.date
+                }
+                this.curindex = index
+            },
+            changethislist: function(list) {
+                this.lists.splice(this.curindex, 1, this.newList)
+                this.newList = {
+                    message: '',
+                    id: '',
+                    flag: ''
+                }
+            },
+            init: function() {
+                this.newList = {
+                    message: '',
+                    id: '',
+                    flag: ''
+                }
+            },
+            deletitem:function(){
+                for(var i=0;i<this.lists.length;i++){
+                    if(this.lists[i].id===this.itemIndex){
+                        this.lists.splice(i,1)
+                        i=i-1
+                    }
+                }
+                this.itemIndex--
+                this.items.splice(this.itemIndex+1,1)
+            },
+            hide:function(){
+                this.isHide = !this.isHide
+            },
+            sort1:function(){
+                var changelist={date:'',flag:'',id:'',message:''}
+                for(var i=0;i<lists.length;i++){
+                    for(var j=0;j<lists.length-1-i;j++){
+                        if(lists[j].date>lists[j+1].date){
+                            changelist = lists[j]
+                            this.lists.splice(j,1,lists[j+1])
+                            this.lists.splice(j+1,1,changelist)
+                        }
+                    }
+                }
+            },
+            sort2:function(){
+                var changelist={date:'',flag:'',id:'',message:''}
+                for(var i=0;i<lists.length;i++){
+                    for(var j=0;j<lists.length-1-i;j++){
+                        if(lists[j].date<lists[j+1].date){
+                            changelist = lists[j]
+                            this.lists.splice(j,1,lists[j+1])
+                            this.lists.splice(j+1,1,changelist)
+                        }
+                    }
+                }
+            }
+        },
+        computed: {
+            searchs: function() {
+                var arry = []
+                for (var i = 0; i < this.lists.length; i++) {
+                    if (this.lists[i].message.search(this.searchVal) != -1) {
+                        arry.push({
+                            id: this.lists[i].id,
+                            message: this.lists[i].message
+                        })
+                    }
+                }
+                console.log(arry)
+                return arry
+            }
+        },
+        watch: {
+            items: {
+                handler() {
+                    localStorage.setItem('items', JSON.stringify(this.items)) 
+                },
+                deep: true
+            },
+            lists: {
+                handler() {
+                    localStorage.setItem('lists', JSON.stringify(this.lists))
+                },
+                deep: true 
+            }
+        },
+    });
+</script>
+</html>
